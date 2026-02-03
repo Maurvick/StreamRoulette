@@ -45,3 +45,10 @@ jobs:
       with:
         name: StreamRoulette-App
         path: ./publish_output/StreamRoulette.exe
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: ./publish_output/StreamRoulette.exe # Шлях до файлу
+        generate_release_notes: true # Автоматично додає опис змін   
