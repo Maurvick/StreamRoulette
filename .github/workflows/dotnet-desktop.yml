@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
+
+    runs-on: windows-latest
+
     strategy:
       matrix:
         configuration: [Release]
-
-    # WPF працює тільки на Windows
-    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -24,7 +26,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: 8.0.x # Перевірте версію (було 10.0.x, але актуальна 8 або 9)
 
     - name: Restore dependencies
       run: dotnet restore
@@ -32,23 +34,21 @@ jobs:
     - name: Build
       run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
 
-    # Self-contained = true 
-    # PublishSingleFile = true
     - name: Publish
-      # auto-detect project file
       run: |
         dotnet publish -c ${{ matrix.configuration }} -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish_output
-    
-    # Upload build
+
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: StreamRoulette-App
         path: ./publish_output/StreamRoulette.exe
 
-    - name: Create Release
+    - name: Create/Update Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: ./publish_output/StreamRoulette.exe # Шлях до файлу
-        generate_release_notes: true # Автоматично додає опис змін   
+        files: ./publish_output/StreamRoulette.exe
+        tag_name: latest
+        name: Latest Build
+        draft: false
+        prerelease: false
