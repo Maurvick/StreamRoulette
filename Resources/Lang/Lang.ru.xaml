@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+	<sys:String x:Key="Str_Name">Название</sys:String>
+	<sys:String x:Key="Str_Amount">Сумма</sys:String>
+	<sys:String x:Key="Str_Clear">Очистить</sys:String>
+	<sys:String x:Key="Str_Add">Добавить</sys:String>
+
+	<sys:String x:Key="Str_Start">Старт</sys:String>
+	<sys:String x:Key="Str_Reset">Сброс</sys:String>
+	<sys:String x:Key="Str_Stop">Стоп</sys:String>
+
+	<sys:String x:Key="Str_Mode">Режим:</sys:String>
+	<sys:String x:Key="Str_ModeAuction">Аукцион</sys:String>
+	<sys:String x:Key="Str_ModeRoulette">Рулетка</sys:String>
+	<sys:String x:Key="Str_ModeInversion">Инверсия</sys:String>
+
+	<sys:String x:Key="Str_Socials">Социальные сети</sys:String>
+	<sys:String x:Key="Str_BankPrefix">Банк: </sys:String>
+	<sys:String x:Key="Str_Currency"> руб.</sys:String>
+</ResourceDictionary>

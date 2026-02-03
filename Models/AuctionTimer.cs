@@ -4,18 +4,17 @@ using System.Windows.Threading;
 
 namespace StreamRoulette.Models
 {
-	public class AuctionTimerModel : INotifyPropertyChanged
+	public class AuctionTimer : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 		private DispatcherTimer Timer;
 		private long TicksEnd;
 		private long SavedValue;
 		private bool _IsRunning;
-		private const int MaxValue = 60 * 60 * 1000;
 
 		public bool IsRunning => _IsRunning;
 
-		public AuctionTimerModel()
+		public AuctionTimer()
 		{
 			Timer = new DispatcherTimer();
 			Timer.Tick += Timer_Tick;
@@ -33,7 +32,7 @@ namespace StreamRoulette.Models
 			if (_IsRunning) return;
 			Timer.Start();
 			_IsRunning = true;
-			TicksEnd = Environment.TickCount64 + SavedValue; // Використовуйте TickCount64
+			TicksEnd = Environment.TickCount64 + SavedValue;
 			NotifyPropertyChanged(nameof(Time));
 		}
 
@@ -53,16 +52,14 @@ namespace StreamRoulette.Models
 				if (IsRunning)
 				{
 					long diff = TicksEnd - Environment.TickCount64;
+					// using TimeSpan as standard representation of time
 					if (diff < 0) { Stop(); SavedValue = 0; return TimeSpan.Zero; }
-					return TimeSpan.FromMilliseconds(diff * 10); // Ваша логіка з UWP (x10000 ticks)
-																 // УВАГА: У вашому оригіналі дивна логіка часу (Ticks / 10000). 
-																 // Я адаптував під стандартний TimeSpan, перевірте коефіцієнти.
+					return TimeSpan.FromMilliseconds(diff * 10);
 				}
 				return TimeSpan.FromMilliseconds(SavedValue * 10);
 			}
 			set
 			{
-				// Логіка встановлення часу
 				SavedValue = (long)value.TotalMilliseconds / 10;
 				if (IsRunning) TicksEnd = Environment.TickCount64 + SavedValue;
 				NotifyPropertyChanged();

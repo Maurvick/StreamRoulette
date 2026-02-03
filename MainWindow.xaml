@@ -5,9 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:StreamRoulette.Converters"
         mc:Ignorable="d"
-        Title="StreamRoulette" Height="700" Width="1000"
+        Title="StreamRoulette" Height="650" Width="1000"
         Background="{StaticResource WindowBackgroundBrush}" 
         WindowStartupLocation="CenterScreen">
+
+	<WindowChrome.WindowChrome>
+		<WindowChrome CaptionHeight="32"  
+                      ResizeBorderThickness="4" 
+                      CornerRadius="0" 
+                      GlassFrameThickness="0"
+                      UseAeroCaptionButtons="False"/>
+	</WindowChrome.WindowChrome>
 
 	<Window.Resources>
 		<converters:AuctionBankToStringConverter x:Key="AuctionBankToStringConverter" />
@@ -15,117 +23,192 @@
 		<converters:AuctionModeToIsCheckedConverter x:Key="AuctionModeToIsCheckedConverter" />
 		<converters:ColorToSolidColorBrushConverter x:Key="ColorToSolidColorBrushConverter" />
 		<converters:ChanceToPercentConverter x:Key="ChanceToPercentConverter" />
+
+		<Style x:Key="TitleBarButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Width" Value="46"/>
+			<Setter Property="Height" Value="32"/>
+			<Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Background" Value="#33FFFFFF"/>
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter Property="Background" Value="#11FFFFFF"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Background" Value="#E81123"/>
+							</Trigger>
+							<Trigger Property="IsPressed" Value="True">
+								<Setter Property="Background" Value="#B00D1A"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 	</Window.Resources>
 
-	<Grid Margin="15">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="2*"/>
-			<ColumnDefinition Width="1.2*"/>
-		</Grid.ColumnDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="32"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-		<Grid Grid.Column="0" Margin="0,0,20,0">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
+		<Grid Grid.Row="0" Background="{StaticResource WindowBackgroundBrush}" MouseLeftButtonDown="TitleBar_MouseDown">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
 
-			<Grid Grid.Row="0" Margin="0,0,0,10">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="80"/>
-					<ColumnDefinition Width="80"/>
-					<ColumnDefinition Width="80"/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Grid.Column="0" Text="Назва" FontSize="18" Foreground="White"/>
-				<TextBlock Grid.Column="1" Text="Сума" FontSize="18" Foreground="White"/>
-				<TextBlock Grid.Column="2" Text="+" FontSize="18" Foreground="White"/>
+			<StackPanel Orientation="Horizontal" 
+            Margin="15,0,0,0" 
+            VerticalAlignment="Center"
+            WindowChrome.IsHitTestVisibleInChrome="True">
+				<TextBlock Text="StreamRoulette" 
+               Foreground="White" 
+               FontSize="12" 
+               VerticalAlignment="Center" 
+               Margin="0,0,10,0"
+               IsHitTestVisible="False"/>
+				<Button Content="UA" Click="BtnLangUA_Click" Width="30" Height="20" FontSize="10" Margin="2" Cursor="Hand"/>
+				<Button Content="EN" Click="BtnLangEN_Click" Width="30" Height="20" FontSize="10" Margin="2" Cursor="Hand"/>
+				<Button Content="RU" Click="BtnLangRU_Click" Width="30" Height="20" FontSize="10" Margin="2" Cursor="Hand"/>
 
-				<Button Grid.Column="3" Content="Очистити" Style="{StaticResource RedButtonStyle}" 
-                        FontSize="12" Padding="5,2" Click="Button_Clear_Click" HorizontalAlignment="Right"/>
-			</Grid>
+			</StackPanel>
 
-			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-				<ItemsControl ItemsSource="{Binding Auction.SortedItems}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Grid Margin="0,0,0,10">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*"/>
-									<ColumnDefinition Width="80"/>
-									<ColumnDefinition Width="80"/>
-									<ColumnDefinition Width="40"/>
-									<ColumnDefinition Width="40"/>
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" Height="35"/>
-
-								<TextBox Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35"
-                                         PreviewKeyDown="TextBox_Amount_PreviewKeyDown" LostFocus="TextBox_Amount_LostFocus"/>
-
-								<TextBox Grid.Column="2" Text="{Binding Addition, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35"
-                                         PreviewKeyDown="TextBox_Addition_PreviewKeyDown" LostFocus="TextBox_Addition_LostFocus"/>
-
-								<Button Grid.Column="3" Content="+" Click="Button_AddMoney_Click" Height="35" Width="35"/>
-
-								<Button Grid.Column="4" Content="✕" Style="{StaticResource RedButtonStyle}" Click="Button_DeleteLot_Click" Height="35" Width="35"/>
-							</Grid>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
-
-			<Button Grid.Row="2" Content="Додати" Click="Button_Add_Click" 
-                    Height="45" Width="150" FontSize="18" Margin="0,20,0,0"/>
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
+				<Button Content="—" Style="{StaticResource TitleBarButtonStyle}" Click="BtnMinimize_Click"/>
+				<Button Content="☐" Style="{StaticResource TitleBarButtonStyle}" Click="BtnMaximize_Click"/>
+				<Button Content="✕" Style="{StaticResource CloseButtonStyle}" Click="BtnClose_Click"/>
+			</StackPanel>
 		</Grid>
 
-		<Grid Grid.Column="1">
-			<StackPanel>
-				<TextBlock Text="{Binding Auction.Bank, Converter={StaticResource AuctionBankToStringConverter}}" 
-                           Foreground="White" FontSize="20" HorizontalAlignment="Right" Margin="0,0,0,30"/>
+		<Grid Grid.Row="1" Margin="15">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="1.2*"/>
+			</Grid.ColumnDefinitions>
 
-				<TextBlock Text="{Binding Timer.Time, Converter={StaticResource TimeSpanToTimerValueConverter}}" 
-                           Foreground="White" FontSize="110" HorizontalAlignment="Center" Margin="0,0,0,20" 
-                           FontFamily="Segoe UI Light"/>
+			<Grid Grid.Column="0" Margin="0,0,20,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 
-				<UniformGrid Columns="4" Margin="0,0,0,10">
-					<Button Content="+1" Click="Button_Add1Time_Click" Height="45"/>
-					<Button Content="+2" Click="Button_Add2Time_Click" Height="45"/>
-					<Button Content="=10" Click="Button_Set10Time_Click" Height="45"/>
-					<Button Content="-1" Click="Button_Sub1Time_Click" Height="45"/>
-				</UniformGrid>
+				<Grid Grid.Row="0" Margin="0,0,0,10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="80"/>
+						<ColumnDefinition Width="80"/>
+						<ColumnDefinition Width="80"/>
+					</Grid.ColumnDefinitions>
+					<TextBlock Grid.Column="0" Text="{DynamicResource Str_Name}" FontSize="18" Foreground="White"/>
+					<TextBlock Grid.Column="1" Text="{DynamicResource Str_Amount}" FontSize="18" Foreground="White"/>
+					<TextBlock Grid.Column="2" Text="+" FontSize="18" Foreground="White"/>
+					<Button Grid.Column="3" Content="{DynamicResource Str_Clear}" Style="{StaticResource RedButtonStyle}" FontSize="12" Padding="5,2" Click="Button_Clear_Click" HorizontalAlignment="Right"/>
+				</Grid>
 
-				<UniformGrid Columns="2" Margin="0,0,0,30">
-					<Button Content="Старт" Click="Button_Start_Click" Height="55" FontSize="20"/>
-					<Button Content="Скидання" Click="Button_ResetTime_Click" Height="55" FontSize="20"/>
-				</UniformGrid>
+				<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+					<ItemsControl ItemsSource="{Binding Auction.SortedItems}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Grid Margin="0,0,0,10">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="80"/>
+										<ColumnDefinition Width="80"/>
+										<ColumnDefinition Width="40"/>
+										<ColumnDefinition Width="40"/>
+									</Grid.ColumnDefinitions>
+									<TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" Height="35"/>
+									<TextBox Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Amount_PreviewKeyDown" LostFocus="TextBox_Amount_LostFocus"/>
+									<TextBox Grid.Column="2" Text="{Binding Addition, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Addition_PreviewKeyDown" LostFocus="TextBox_Addition_LostFocus"/>
+									<Button Grid.Column="3" Content="+" Click="Button_AddMoney_Click" Height="35" Width="35"/>
+									<Button Grid.Column="4" Content="✕" Style="{StaticResource RedButtonStyle}" Click="Button_DeleteLot_Click" Height="35" Width="35"/>
+								</Grid>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
 
-				<TextBlock Text="Режим:" Foreground="White" FontSize="18" Margin="0,0,0,10"/>
-				<StackPanel Margin="10,0,0,0">
-					<RadioButton Content="Аукціон" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Normal}"/>
-					<RadioButton Content="Рулетка" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Roulette}" IsEnabled="False" Opacity="0.5"/>
-					<RadioButton Content="Інверсія" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Reversed}"/>
+				<Button Grid.Row="2" Content="{DynamicResource Str_Add}" Click="Button_Add_Click" Height="45" Width="150" FontSize="18" Margin="0,20,0,0"/>
+			</Grid>
+
+			<Grid Grid.Column="1">
+				<StackPanel>
+					<TextBlock Foreground="White" 
+					   FontSize="20" 
+					   HorizontalAlignment="Right" 
+					   Margin="0,0,0,30">
+    
+						<Run Text="{DynamicResource Str_BankPrefix}"/>
+    
+						<Run Text="{Binding Auction.Bank, Converter={StaticResource AuctionBankToStringConverter}, Mode=OneWay}"
+							 Foreground="{StaticResource ThemeMainBrush}"/> 
+    
+						<Run Text="{DynamicResource Str_Currency}"/>		
+
+					</TextBlock>
+
+					<UniformGrid Columns="4" Margin="0,0,0,10">
+						<Button Content="+1" Click="Button_Add1Time_Click" Height="45"/>
+						<Button Content="+2" Click="Button_Add2Time_Click" Height="45"/>
+						<Button Content="=10" Click="Button_Set10Time_Click" Height="45"/>
+						<Button Content="-1" Click="Button_Sub1Time_Click" Height="45"/>
+					</UniformGrid>
+
+					<UniformGrid Columns="2" Margin="0,0,0,30">
+						<Button Content="{DynamicResource Str_Start}" Click="Button_Start_Click" Height="55" FontSize="20"/>
+						<Button Content="{DynamicResource Str_Reset}" Click="Button_ResetTime_Click" Height="55" FontSize="20"/>
+					</UniformGrid>
+
+					<TextBlock Text="Режим:" Foreground="White" FontSize="18" Margin="0,0,0,10"/>
+					<StackPanel Margin="10,0,0,0">
+						<RadioButton Content="{DynamicResource Str_ModeAuction}" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Normal}"/>
+						<RadioButton Content="{DynamicResource Str_ModeRoulette}" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Roulette}" IsEnabled="False" Opacity="0.5"/>
+						<RadioButton Content="{DynamicResource Str_ModeInversion}" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Reversed}"/>
+					</StackPanel>
+
+					<StackPanel Margin="0,50,0,0" HorizontalAlignment="Right">
+						<TextBlock Text="{DynamicResource Str_Socials}" Foreground="{StaticResource ThemeMainBrush}" FontSize="16" HorizontalAlignment="Right" Margin="0,0,0,5"/>
+						<TextBlock HorizontalAlignment="Right" Margin="0,2">
+                            <Hyperlink NavigateUri="https://www.twitch.tv/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.twitch.tv/crazzzypeter</Hyperlink>
+						</TextBlock>
+						<TextBlock HorizontalAlignment="Right" Margin="0,2">
+                            <Hyperlink NavigateUri="https://www.youtube.com/c/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.youtube.com/c/crazzzypeter</Hyperlink>
+						</TextBlock>
+						<TextBlock HorizontalAlignment="Right" Margin="0,2">
+                            <Hyperlink NavigateUri="https://www.github.com/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.github.com/crazzzypeter</Hyperlink>
+						</TextBlock>
+					</StackPanel>
 				</StackPanel>
-
-				<StackPanel Margin="0,50,0,0" HorizontalAlignment="Right">
-					<TextBlock Text="Соціальні мережі @CrazzzyPeter:" Foreground="{StaticResource ThemeMainBrush}" FontSize="16" HorizontalAlignment="Right" Margin="0,0,0,5"/>
-					<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                        <Hyperlink NavigateUri="https://www.twitch.tv/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">
-                            www.twitch.tv/crazzzypeter
-                        </Hyperlink>
-					</TextBlock>
-					<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                        <Hyperlink NavigateUri="https://www.youtube.com/c/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">
-                            www.youtube.com/c/crazzzypeter
-                        </Hyperlink>
-					</TextBlock>
-					<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                        <Hyperlink NavigateUri="https://www.github.com/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">
-                            www.github.com/crazzzypeter
-                        </Hyperlink>
-					</TextBlock>
-				</StackPanel>
-			</StackPanel>
+			</Grid>
 		</Grid>
 	</Grid>
 </Window>

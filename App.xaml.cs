@@ -8,23 +8,22 @@ namespace StreamRoulette
 {
 	public partial class App : Application
 	{
-		private static AuctionModel _AuctionModel = new AuctionModel();
+		private static Auction _AuctionModel = new Auction();
 
-		// Сінглтон моделі
-		public static AuctionModel AuctionModel => _AuctionModel;
+		// Use singleton pattern for Auction model
+		public static Auction AuctionModel => _AuctionModel;
 
-		// Шлях до файлу (AppData/Local/CrazzzyAuction/state.txt)
+		// Save app state locally (AppData/Local/CrazzzyAuction/state.txt)
 		private static readonly string AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CrazzzyAuction");
 		private static readonly string StateFileName = Path.Combine(AppDataPath, "state.txt");
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			// Глобальний перехоплювач помилок
+			// Create global exception handler
 			DispatcherUnhandledException += App_DispatcherUnhandledException;
 
 			base.OnStartup(e);
 
-			// Створюємо папку, якщо її немає
 			if (!Directory.Exists(AppDataPath))
 			{
 				Directory.CreateDirectory(AppDataPath);
@@ -32,7 +31,6 @@ namespace StreamRoulette
 
 			LoadState();
 
-			// Запускаємо головне вікно
 			MainWindow mainWindow = new MainWindow();
 			mainWindow.Show();
 		}
@@ -45,14 +43,45 @@ namespace StreamRoulette
 
 		private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
-			// Показати повідомлення про помилку
 			MessageBox.Show($"An error occured: {e.Exception.Message}\n\n{e.Exception.StackTrace}",
 							"Critical error",
 							MessageBoxButton.OK,
 							MessageBoxImage.Error);
 
-			// Запобігти закриттю програми (якщо помилка не фатальна)
 			e.Handled = true;
+		}
+
+		public void ChangeLanguage(string langCode)
+		{
+			// Save the choice in the model (to write to file later)
+			AuctionModel.CurrentLanguage = langCode;
+
+			ResourceDictionary dict = new ResourceDictionary();
+			try
+			{
+				dict.Source = new Uri($"Resources/Lang/Lang.{langCode}.xaml", UriKind.Relative);
+			}
+			catch
+			{
+				return;
+			}
+
+			ResourceDictionary oldDict = null;
+			foreach (ResourceDictionary d in Resources.MergedDictionaries)
+			{
+				if (d.Source != null && d.Source.OriginalString.Contains("Resources/Lang/"))
+				{
+					oldDict = d;
+					break;
+				}
+			}
+
+			if (oldDict != null)
+			{
+				Resources.MergedDictionaries.Remove(oldDict);
+			}
+
+			Resources.MergedDictionaries.Add(dict);
 		}
 
 		private void LoadState()
@@ -62,33 +91,28 @@ namespace StreamRoulette
 				if (File.Exists(StateFileName))
 				{
 					var text = File.ReadAllText(StateFileName);
-
-					// Використовуємо налаштування для збереження типів, якщо потрібно, або просто десеріалізацію
-					var auctionModel = JsonConvert.DeserializeObject<AuctionModel>(text);
-					// Примітка: ConverterILotToLot може знадобитися, якщо AuctionModel використовує інтерфейси
+					var auctionModel = JsonConvert.DeserializeObject<Auction>(text);
 
 					if (auctionModel != null)
 					{
-						// Тут ми не можемо просто замінити об'єкт _AuctionModel, 
-						// тому ми копіюємо дані в існуючий сінглтон.
-						// Або, як варіант, зробіть сеттер для _AuctionModel (менш безпечно для прив'язок).
-
+						// We cannot just replace the _AuctionModel object, 
+						// so we copy the data into the existing singleton.
 						_AuctionModel.Clear();
-						// Тут потрібна логіка копіювання items з auctionModel в _AuctionModel
-						// Для простоти, якщо AuctionModel дозволяє:
 						foreach (var item in auctionModel.Items)
 						{
-							// Це спрацює, якщо ви реалізували Add(item) або доступ до колекції
-							_AuctionModel.Add(); // Спрощено, тут треба переносити властивості
+							_AuctionModel.Add();
 						}
+						_AuctionModel.CurrentLanguage = auctionModel.CurrentLanguage;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				// Логування помилки
 				System.Diagnostics.Debug.WriteLine($"Error loading state: {ex.Message}");
 			}
+
+			// Use the loaded language immediately after loading data
+			ChangeLanguage(_AuctionModel.CurrentLanguage);
 		}
 
 		private void SaveState()

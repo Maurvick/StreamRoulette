@@ -8,12 +8,13 @@ namespace StreamRoulette
 {
 	public partial class MainWindow : Window
 	{
-		// Таймер у WPF знаходиться в System.Windows.Threading
-		public AuctionTimerModel Timer { get; } = new AuctionTimerModel();
-		public AuctionModel Auction { get; } = new AuctionModel();
+		public AuctionTimer Timer { get; } = new AuctionTimer();
+		public Auction Auction { get; } = new Auction();
 
-		// Файл для збереження в AppData
-		private readonly string StateFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CrazzzyAuction_State.json");
+		// Save state as file in AppData
+		private readonly string StateFile = 
+			Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+				"CrazzzyAuction_State.json");
 
 		public MainWindow()
 		{
@@ -23,7 +24,7 @@ namespace StreamRoulette
 
 			if (Auction.Items.Count == 0) ClearAll();
 
-			// Встановлюємо таймер за замовчуванням
+			// Set default timer to 10 minutes
 			Timer.Time = new TimeSpan(0, 10, 0);
 
 			Closing += MainWindow_Closing;
@@ -34,6 +35,35 @@ namespace StreamRoulette
 			SaveState();
 		}
 
+		// == Custom Title Bar Buttons ==
+
+		// Allow dragging the window by the title bar
+		private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton == MouseButton.Left)
+				DragMove();
+		}
+
+		private void BtnMinimize_Click(object sender, RoutedEventArgs e)
+		{
+			WindowState = WindowState.Minimized;
+		}
+
+		private void BtnMaximize_Click(object sender, RoutedEventArgs e)
+		{
+			if (WindowState == WindowState.Maximized)
+				WindowState = WindowState.Normal;
+			else
+				WindowState = WindowState.Maximized;
+		}
+
+		private void BtnClose_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		// == State Management ==
+
 		private void SaveState()
 		{
 			try
@@ -41,7 +71,10 @@ namespace StreamRoulette
 				var json = JsonConvert.SerializeObject(Auction, Formatting.Indented);
 				File.WriteAllText(StateFile, json);
 			}
-			catch { /* ігноруємо помилки запису */ }
+			catch 
+			{
+				// Currently ignoring save errors
+			}
 		}
 
 		private void LoadState()
@@ -51,17 +84,19 @@ namespace StreamRoulette
 				if (File.Exists(StateFile))
 				{
 					var json = File.ReadAllText(StateFile);
-					var loaded = JsonConvert.DeserializeObject<AuctionModel>(json);
+					var loaded = JsonConvert.DeserializeObject<Auction>(json);
 					if (loaded != null)
 					{
-						// Копіюємо дані, оскільки Auction вже створено
+						// Copy data since Auction is already created
 						Auction.Clear();
-						foreach (var item in loaded.Items) Auction.Add(); // Додаємо логіку перенесення даних якщо потрібно
-																		  // Простіше було б присвоїти Auction = loaded, але тоді треба оновити DataContext або реалізувати INPC для властивості Auction
+						foreach (var item in loaded.Items) Auction.Add(); 
 					}
 				}
 			}
-			catch { }
+			catch 
+			{
+				// Currently ignoring load errors
+			}
 		}
 
 		private void ClearAll()
@@ -79,15 +114,33 @@ namespace StreamRoulette
 			return null;
 		}
 
-		// Обробники подій
+		// == Event Handlers ==
 
 		private void Button_Add_Click(object sender, RoutedEventArgs e) => Auction.Add();
 
+		// FIXME: Broken confirmation dialog localization due to Auction conflicting naming
 		private void Button_Clear_Click(object sender, RoutedEventArgs e)
 		{
-			if (MessageBox.Show("Очистити все? Це видалить усі лоти.", "Підтвердження", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+			if (Auction.CurrentLanguage == "ua")
 			{
-				ClearAll();
+				if (MessageBox.Show("Видалити всі рядки?", "Підтвердження", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+				{
+					ClearAll();
+				}
+			}
+			if (Auction.CurrentLanguage == "ru")
+			{
+				if (MessageBox.Show("Удалить все строки?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+				{
+					ClearAll();
+				}
+			}
+			if (Auction.CurrentLanguage == "en")
+			{
+				if (MessageBox.Show("Delete all rows?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+				{
+					ClearAll();
+				}
 			}
 		}
 
@@ -117,7 +170,7 @@ namespace StreamRoulette
 			}
 		}
 
-		// Для Addition
+		// Addition logic
 		private void TextBox_Addition_PreviewKeyDown(object sender, KeyEventArgs e) => TextBox_Amount_PreviewKeyDown(sender, e);
 
 		private void TextBox_Amount_LostFocus(object sender, RoutedEventArgs e)
@@ -132,7 +185,7 @@ namespace StreamRoulette
 			Auction.MakeRandomColor(GetLotFromSender(sender));
 		}
 
-		// Таймер
+		// Timer
 		private void Button_Start_Click(object sender, RoutedEventArgs e)
 		{
 			if (!Timer.IsRunning) Timer.Start();
@@ -145,9 +198,30 @@ namespace StreamRoulette
 			Timer.Time = TimeSpan.Zero;
 		}
 
+		private void BtnLangUA_Click(object sender, RoutedEventArgs e)
+		{
+			(Application.Current as App).ChangeLanguage("ua");
+		}
+
+		private void BtnLangRU_Click(object sender, RoutedEventArgs e)
+		{
+			(Application.Current as App).ChangeLanguage("ru");
+		}
+
+		private void BtnLangEN_Click(object sender, RoutedEventArgs e)
+		{
+			(Application.Current as App).ChangeLanguage("en");
+		}
+
+		// Timer adjustments
 		private void Button_Add1Time_Click(object sender, RoutedEventArgs e) => Timer.Time += TimeSpan.FromMinutes(1);
 		private void Button_Add2Time_Click(object sender, RoutedEventArgs e) => Timer.Time += TimeSpan.FromMinutes(2);
 		private void Button_Set10Time_Click(object sender, RoutedEventArgs e) { Timer.Time = TimeSpan.FromMinutes(10); Timer.Stop(); }
 		private void Button_Sub1Time_Click(object sender, RoutedEventArgs e) => Timer.Time -= TimeSpan.FromMinutes(1);
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+		}
 	}
 }
