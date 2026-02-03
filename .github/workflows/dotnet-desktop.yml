@@ -1,0 +1,47 @@
+name: Build StreamRoulette WPF
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+
+    # WPF працює тільки на Windows
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
+
+    # Self-contained = true 
+    # PublishSingleFile = true
+    - name: Publish
+      # auto-detect project file
+      run: |
+        dotnet publish -c ${{ matrix.configuration }} -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish_output
+    
+    # Upload build
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: StreamRoulette-App
+        path: ./publish_output/StreamRoulette.exe
