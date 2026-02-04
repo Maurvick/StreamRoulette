@@ -70,6 +70,60 @@
 		<Setter Property="Foreground" Value="White"/>
 		<Setter Property="FontSize" Value="16"/>
 		<Setter Property="Margin" Value="0,5"/>
+		<Setter Property="Cursor" Value="Hand"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="RadioButton">
+					<Grid Background="Transparent">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+
+						<Border x:Name="OuterBorder"
+                            Grid.Column="0"
+                            Width="22" Height="22"
+                            CornerRadius="11"
+                            BorderThickness="2"
+                            BorderBrush="#888888" 
+                            Background="Transparent"
+                            VerticalAlignment="Center"/>
+
+						<Ellipse x:Name="CheckMark"
+                             Grid.Column="0"
+                             Width="12" Height="12"
+                             Fill="{StaticResource ThemeMainBrush}"
+                             Opacity="0"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"/>
+
+						<ContentPresenter Grid.Column="1"
+                                      Margin="10,0,0,0"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalAlignment="Left"
+                                      RecognizesAccessKey="True"/>
+					</Grid>
+
+					<ControlTemplate.Triggers>
+
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource ThemeMainBrush}"/>
+						</Trigger>
+
+						<Trigger Property="IsChecked" Value="True">
+							<Setter TargetName="CheckMark" Property="Opacity" Value="1"/>
+							<Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource ThemeMainBrush}"/>
+						</Trigger>
+
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Opacity" Value="0.5"/>
+						</Trigger>
+
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
 
 	<Style TargetType="Hyperlink">
