@@ -8,10 +8,10 @@ namespace StreamRoulette
 {
 	public partial class App : Application
 	{
-		private static Auction _AuctionModel = new Auction();
+		private static AuctionModel _AuctionModel = new AuctionModel();
 
 		// Use singleton pattern for Auction model
-		public static Auction AuctionModel => _AuctionModel;
+		public static AuctionModel AuctionModel => _AuctionModel;
 
 		// Save app state locally (AppData/Local/CrazzzyAuction/state.txt)
 		private static readonly string AppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CrazzzyAuction");
@@ -91,7 +91,7 @@ namespace StreamRoulette
 				if (File.Exists(StateFileName))
 				{
 					var text = File.ReadAllText(StateFileName);
-					var auctionModel = JsonConvert.DeserializeObject<Auction>(text);
+					var auctionModel = JsonConvert.DeserializeObject<AuctionModel>(text);
 
 					if (auctionModel != null)
 					{

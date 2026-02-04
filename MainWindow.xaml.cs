@@ -8,8 +8,8 @@ namespace StreamRoulette
 {
 	public partial class MainWindow : Window
 	{
-		public AuctionTimer Timer { get; } = new AuctionTimer();
-		public Auction Auction { get; } = new Auction();
+		public AuctionTimerModel Timer { get; } = new AuctionTimerModel();
+		public AuctionModel Auction { get; } = new AuctionModel();
 
 		// Save state as file in AppData
 		private readonly string StateFile = 
@@ -84,7 +84,7 @@ namespace StreamRoulette
 				if (File.Exists(StateFile))
 				{
 					var json = File.ReadAllText(StateFile);
-					var loaded = JsonConvert.DeserializeObject<Auction>(json);
+					var loaded = JsonConvert.DeserializeObject<AuctionModel>(json);
 					if (loaded != null)
 					{
 						// Copy data since Auction is already created
@@ -118,29 +118,15 @@ namespace StreamRoulette
 
 		private void Button_Add_Click(object sender, RoutedEventArgs e) => Auction.Add();
 
-		// FIXME: Broken confirmation dialog localization due to Auction conflicting naming
 		private void Button_Clear_Click(object sender, RoutedEventArgs e)
 		{
-			if (Auction.CurrentLanguage == "ua")
+			// Retrieve the localized strings from the current resources
+			string message = (string)FindResource("Str_Msg_ClearConfirm");
+			string title = (string)FindResource("Str_Msg_TitleConfirm");
+
+			if (CustomMessageBox.Show(message, title, true))
 			{
-				if (MessageBox.Show("Видалити всі рядки?", "Підтвердження", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-				{
-					ClearAll();
-				}
-			}
-			if (Auction.CurrentLanguage == "ru")
-			{
-				if (MessageBox.Show("Удалить все строки?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-				{
-					ClearAll();
-				}
-			}
-			if (Auction.CurrentLanguage == "en")
-			{
-				if (MessageBox.Show("Delete all rows?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-				{
-					ClearAll();
-				}
+				ClearAll();
 			}
 		}
 

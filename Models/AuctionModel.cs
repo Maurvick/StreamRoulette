@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace StreamRoulette.Models
 {
 	[JsonObject(MemberSerialization.OptIn)]
-	public class Auction : INotifyPropertyChanged
+	public class AuctionModel : INotifyPropertyChanged
 	{
 		[JsonProperty("Items")]
 		private readonly ObservableCollection<ILot> _Items;
@@ -21,7 +21,7 @@ namespace StreamRoulette.Models
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public Auction()
+		public AuctionModel()
 		{
 			_Items = new ObservableCollection<ILot>();
 			_ReadOnlyItems = new ReadOnlyObservableCollection<ILot>(_Items);

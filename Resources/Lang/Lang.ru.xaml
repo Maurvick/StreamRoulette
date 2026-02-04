@@ -19,4 +19,9 @@
 	<sys:String x:Key="Str_Socials">Социальные сети</sys:String>
 	<sys:String x:Key="Str_BankPrefix">Банк: </sys:String>
 	<sys:String x:Key="Str_Currency"> руб.</sys:String>
+
+	<sys:String x:Key="Str_Msg_ClearConfirm">Удалить все строки?</sys:String>
+	<sys:String x:Key="Str_Msg_TitleConfirm">Подтверждение</sys:String>
+	<sys:String x:Key="Str_Msg_YesConfirm">Да</sys:String>
+	<sys:String x:Key="Str_Msg_NoConfirm">Нет</sys:String>
 </ResourceDictionary>

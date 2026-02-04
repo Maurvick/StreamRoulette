@@ -19,4 +19,9 @@
 	<sys:String x:Key="Str_Socials">Social networks</sys:String>
 	<sys:String x:Key="Str_BankPrefix">Bank:</sys:String>
 	<sys:String x:Key="Str_Currency">usd.</sys:String>
+
+	<sys:String x:Key="Str_Msg_ClearConfirm">Delete all rows?</sys:String>
+	<sys:String x:Key="Str_Msg_TitleConfirm">Confirmation</sys:String>
+	<sys:String x:Key="Str_Msg_YesConfirm">Yes</sys:String>
+	<sys:String x:Key="Str_Msg_NoConfirm">No</sys:String>
 </ResourceDictionary>

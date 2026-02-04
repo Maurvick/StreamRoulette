@@ -18,4 +18,9 @@
 	<sys:String x:Key="Str_Socials">Соціальні мережі</sys:String>
 	<sys:String x:Key="Str_BankPrefix">Банк:</sys:String>
 	<sys:String x:Key="Str_Currency">грн.</sys:String>
+
+	<sys:String x:Key="Str_Msg_ClearConfirm">Видалити всі рядки?</sys:String>
+	<sys:String x:Key="Str_Msg_TitleConfirm">Підтвердження</sys:String>
+	<sys:String x:Key="Str_Msg_YesConfirm">Так</sys:String>
+	<sys:String x:Key="Str_Msg_NoConfirm">Ні</sys:String>
 </ResourceDictionary>

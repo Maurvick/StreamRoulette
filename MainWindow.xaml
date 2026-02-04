@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:StreamRoulette.Converters"
         mc:Ignorable="d"
-        Title="StreamRoulette" Height="650" Width="1000"
+        Title="StreamRoulette" Height="700" Width="1000"
         Background="{StaticResource WindowBackgroundBrush}" 
         WindowStartupLocation="CenterScreen">
 
@@ -79,7 +79,7 @@
 		</Grid.RowDefinitions>
 
 		<Grid Grid.Row="0" Background="{StaticResource WindowBackgroundBrush}" MouseLeftButtonDown="TitleBar_MouseDown">
-			<Grid.ColumnDefinitions>
+		<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"/>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="Auto"/>
@@ -101,6 +101,7 @@
 
 			</StackPanel>
 
+			<!-- Custom title bar -->
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
 				<Button Content="—" Style="{StaticResource TitleBarButtonStyle}" Click="BtnMinimize_Click"/>
 				<Button Content="☐" Style="{StaticResource TitleBarButtonStyle}" Click="BtnMaximize_Click"/>
@@ -110,71 +111,69 @@
 
 		<Grid Grid.Row="1" Margin="15">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="2*"/>
-				<ColumnDefinition Width="1.2*"/>
-			</Grid.ColumnDefinitions>
+			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="1.2*"/>
+		</Grid.ColumnDefinitions>
 
-			<Grid Grid.Column="0" Margin="0,0,20,0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+		<Grid Grid.Column="0" Margin="0,0,20,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
 
-				<Grid Grid.Row="0" Margin="0,0,0,10">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="80"/>
-						<ColumnDefinition Width="80"/>
-						<ColumnDefinition Width="80"/>
-					</Grid.ColumnDefinitions>
+			<Grid Grid.Row="0" Margin="0,0,0,10">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="80"/>
+					<ColumnDefinition Width="80"/>
+					<ColumnDefinition Width="80"/>
+				</Grid.ColumnDefinitions>
 					<TextBlock Grid.Column="0" Text="{DynamicResource Str_Name}" FontSize="18" Foreground="White"/>
 					<TextBlock Grid.Column="1" Text="{DynamicResource Str_Amount}" FontSize="18" Foreground="White"/>
-					<TextBlock Grid.Column="2" Text="+" FontSize="18" Foreground="White"/>
+				<TextBlock Grid.Column="2" Text="+" FontSize="18" Foreground="White"/>
 					<Button Grid.Column="3" Content="{DynamicResource Str_Clear}" Style="{StaticResource RedButtonStyle}" FontSize="12" Padding="5,2" Click="Button_Clear_Click" HorizontalAlignment="Right"/>
-				</Grid>
-
-				<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-					<ItemsControl ItemsSource="{Binding Auction.SortedItems}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Grid Margin="0,0,0,10">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="*"/>
-										<ColumnDefinition Width="80"/>
-										<ColumnDefinition Width="80"/>
-										<ColumnDefinition Width="40"/>
-										<ColumnDefinition Width="40"/>
-									</Grid.ColumnDefinitions>
-									<TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" Height="35"/>
-									<TextBox Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Amount_PreviewKeyDown" LostFocus="TextBox_Amount_LostFocus"/>
-									<TextBox Grid.Column="2" Text="{Binding Addition, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Addition_PreviewKeyDown" LostFocus="TextBox_Addition_LostFocus"/>
-									<Button Grid.Column="3" Content="+" Click="Button_AddMoney_Click" Height="35" Width="35"/>
-									<Button Grid.Column="4" Content="✕" Style="{StaticResource RedButtonStyle}" Click="Button_DeleteLot_Click" Height="35" Width="35"/>
-								</Grid>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</ScrollViewer>
-
-				<Button Grid.Row="2" Content="{DynamicResource Str_Add}" Click="Button_Add_Click" Height="45" Width="150" FontSize="18" Margin="0,20,0,0"/>
 			</Grid>
 
-			<Grid Grid.Column="1">
-				<StackPanel>
-					<TextBlock Foreground="White" 
-					   FontSize="20" 
-					   HorizontalAlignment="Right" 
-					   Margin="0,0,0,30">
-    
-						<Run Text="{DynamicResource Str_BankPrefix}"/>
-    
-						<Run Text="{Binding Auction.Bank, Converter={StaticResource AuctionBankToStringConverter}, Mode=OneWay}"
-							 Foreground="{StaticResource ThemeMainBrush}"/> 
-    
-						<Run Text="{DynamicResource Str_Currency}"/>		
+			<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+				<ItemsControl ItemsSource="{Binding Auction.SortedItems}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Grid Margin="0,0,0,10">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="80"/>
+									<ColumnDefinition Width="80"/>
+									<ColumnDefinition Width="40"/>
+									<ColumnDefinition Width="40"/>
+								</Grid.ColumnDefinitions>
+								<!-- New generated lots here-->
+								<TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" Height="35"/>
+									<TextBox Grid.Column="1" Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Amount_PreviewKeyDown" LostFocus="TextBox_Amount_LostFocus"/>
+									<TextBox Grid.Column="2" Text="{Binding Addition, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,5,0" Height="35" PreviewKeyDown="TextBox_Addition_PreviewKeyDown" LostFocus="TextBox_Addition_LostFocus"/>
+								<Button Grid.Column="3" Content="+" Click="Button_AddMoney_Click" Height="35" Width="35"/>
 
+								<Button Grid.Column="4" Content="✕" Style="{StaticResource RedButtonStyle}" Click="Button_DeleteLot_Click" Height="35" Width="35"/>
+							</Grid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+				<Button Grid.Row="2" Content="{DynamicResource Str_Add}" Click="Button_Add_Click" Height="45" Width="150" FontSize="18" Margin="0,20,0,0"/>
+		</Grid>
+
+		<Grid Grid.Column="1">
+				<StackPanel>
+					<TextBlock Foreground="White" FontSize="20" HorizontalAlignment="Right" Margin="0,0,0,30">
+						<Run Text="{DynamicResource Str_BankPrefix}"/>
+						<Run Text="{Binding Auction.Bank, Converter={StaticResource AuctionBankToStringConverter}, Mode=OneWay}"/>
+						<Run Text="{DynamicResource Str_Currency}"/>
 					</TextBlock>
+
+					<TextBlock Text="{Binding Timer.Time, Converter={StaticResource TimeSpanToTimerValueConverter}}" 
+                        Foreground="White" FontSize="110" HorizontalAlignment="Center" Margin="0,0,0,20" 
+                        FontFamily="Segoe UI Light"/>
 
 					<UniformGrid Columns="4" Margin="0,0,0,10">
 						<Button Content="+1" Click="Button_Add1Time_Click" Height="45"/>
@@ -195,20 +194,21 @@
 						<RadioButton Content="{DynamicResource Str_ModeInversion}" IsChecked="{Binding Auction.Mode, Converter={StaticResource AuctionModeToIsCheckedConverter}, ConverterParameter=Reversed}"/>
 					</StackPanel>
 
+					<!--Should be placed in lower right corner of the window--> 
 					<StackPanel Margin="0,50,0,0" HorizontalAlignment="Right">
 						<TextBlock Text="{DynamicResource Str_Socials}" Foreground="{StaticResource ThemeMainBrush}" FontSize="16" HorizontalAlignment="Right" Margin="0,0,0,5"/>
 						<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                            <Hyperlink NavigateUri="https://www.twitch.tv/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.twitch.tv/crazzzypeter</Hyperlink>
+                        <Hyperlink NavigateUri="https://www.twitch.tv/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.twitch.tv/crazzzypeter</Hyperlink>
 						</TextBlock>
 						<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                            <Hyperlink NavigateUri="https://www.youtube.com/c/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.youtube.com/c/crazzzypeter</Hyperlink>
+                        <Hyperlink NavigateUri="https://www.youtube.com/c/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.youtube.com/c/crazzzypeter</Hyperlink>
 						</TextBlock>
 						<TextBlock HorizontalAlignment="Right" Margin="0,2">
-                            <Hyperlink NavigateUri="https://www.github.com/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.github.com/crazzzypeter</Hyperlink>
+                        <Hyperlink NavigateUri="https://www.github.com/crazzzypeter" RequestNavigate="Hyperlink_RequestNavigate">www.github.com/crazzzypeter</Hyperlink>
 						</TextBlock>
 					</StackPanel>
 				</StackPanel>
 			</Grid>
-		</Grid>
+	</Grid>
 	</Grid>
 </Window>

@@ -4,7 +4,7 @@ using System.Windows.Threading;
 
 namespace StreamRoulette.Models
 {
-	public class AuctionTimer : INotifyPropertyChanged
+	public class AuctionTimerModel : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 		private DispatcherTimer Timer;
@@ -14,7 +14,7 @@ namespace StreamRoulette.Models
 
 		public bool IsRunning => _IsRunning;
 
-		public AuctionTimer()
+		public AuctionTimerModel()
 		{
 			Timer = new DispatcherTimer();
 			Timer.Tick += Timer_Tick;
